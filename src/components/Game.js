@@ -1,15 +1,19 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import Board from "./Board"
 
 
-const Game = ({ boardSize }) => {
-    boardSize *= boardSize
-    const initialState = [...Array(boardSize).keys()].map((e, i) => ({
+const Game = ({ numCols }) => {
+
+    const initialState = () => [...Array(boardSize).keys()].map((e, i) => ({
         value: e,
         isActive: i !== (boardSize - 1)
     }))
 
+    const [boardSize, setBoardSize] = useState(Math.pow(numCols, 2))
     const [tiles, setTiles] = useState(initialState)
+    useEffect(() => {
+        setTiles(initialState)
+    }, [boardSize])
 
     const handleClick = (dir) => {
         console.log(dir)
@@ -22,13 +26,13 @@ const Game = ({ boardSize }) => {
             switch (dir) {
                 case "left":
                     if (emptyIndex % numCols === 0) {
-                        throw "Invalid move"
+                        throw new Error("Invalid move")
                     }
                     swapIndex -= 1
                     break
                 case "right":
                     if (emptyIndex % numCols === numCols - 1) {
-                        throw "Invalid move"
+                        throw new Error("Invalid move")
                     }
                     swapIndex += 1
                     break
@@ -39,10 +43,10 @@ const Game = ({ boardSize }) => {
                     swapIndex += numCols
                     break
                 default:
-                    throw "unknown input"
+                    throw new Error("unknown input")
             }
             if (swapIndex >= tilesCopy.length || swapIndex < 0) {
-                throw "OutOfBounds"
+                throw new Error("OutOfBounds")
             }
         }
         catch (err) {
@@ -55,8 +59,9 @@ const Game = ({ boardSize }) => {
 
 
     }
-
+    let selectedNumCols = Math.sqrt(boardSize)
     return (
+
         <div>
             <Board tiles={tiles} boardSize={boardSize} />
             <button onClick={() => handleClick("left")}>left</button>
@@ -64,6 +69,7 @@ const Game = ({ boardSize }) => {
             <button onClick={() => handleClick("down")}>down</button>
             <button onClick={() => handleClick("right")}>right</button>
             <button onClick={() => setTiles(initialState)}>reset</button>
+            <input type="number" value={selectedNumCols} onChange={(event) => setBoardSize(Math.pow(event.target.value, 2))} />
         </div>
     )
 }

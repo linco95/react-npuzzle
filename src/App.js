@@ -10,7 +10,7 @@ function App() {
       <Header title="15 Puzzle" />
       <main>
         <h1>15 Puzzle</h1>
-        <Game boardSize={4} />
+        <Game numCols={4} />
       </main>
     </div>
   );
